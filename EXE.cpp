@@ -2,8 +2,6 @@
 #include <string>
 using namespace std;
 
-int RegisterMemory[32] = {0};
-
 struct reg_IDEXE{
     string opcode;
     int rs;               // reg的編號
@@ -33,6 +31,7 @@ struct reg_EXEMEM{
     char MemToReg = '0';  // lw
     char RegWrite = '0';  // R-format, lw
     int WriteRegNum = 0;  // 寫回的reg編號(RegWrite == 1)
+    int WriteData;
 } EXEMEM;
 
 class EXE{
@@ -65,15 +64,22 @@ private:
         // 下面ALU的運算
         if(IDEXE.opcode == "add"){
             // rs + rt
-            EXEMEM.ALUResult = RegisterMemory[IDEXE.rs] + RegisterMemory[IDEXE.rt];
+            EXEMEM.ALUResult = IDEXE.rs + IDEXE.rt;
         }
         else if(IDEXE.opcode == "sub"){
             // rs-rt
-            EXEMEM.ALUResult = RegisterMemory[IDEXE.rs] - RegisterMemory[IDEXE.rt];
+            EXEMEM.ALUResult = IDEXE.rs - IDEXE.rt;
         }
         else if(IDEXE.opcode == "lw" || IDEXE.opcode == "sw"){
             // rs + offset
-            EXEMEM.ALUResult = RegisterMemory[IDEXE.rs] + IDEXE.address;
+            EXEMEM.ALUResult = IDEXE.rs + IDEXE.address;
+        }
+
+        if(IDEXE.MemWrite == '1'){
+            EXEMEM.WriteData = IDEXE.rt; 
+        }
+        else{
+            EXEMEM.WriteData = 0;
         }
     }
 
